@@ -1,4 +1,3 @@
-
 import { SavedProject } from "../types";
 
 const STORAGE_KEY = 'ngo_architect_projects';
@@ -6,11 +5,12 @@ const STORAGE_KEY = 'ngo_architect_projects';
 export const saveProject = (project: SavedProject): void => {
   try {
     const existing = getProjects();
+    // Check if update or new
     const index = existing.findIndex(p => p.id === project.id);
     if (index >= 0) {
-      existing[index] = { ...project, timestamp: Date.now() };
+      existing[index] = project;
     } else {
-      existing.unshift(project);
+      existing.unshift(project); // Add to top
     }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(existing));
   } catch (e) {
@@ -27,11 +27,6 @@ export const getProjects = (): SavedProject[] => {
     console.error("Failed to load projects", e);
     return [];
   }
-};
-
-export const getProjectById = (id: string): SavedProject | null => {
-  const projects = getProjects();
-  return projects.find(p => p.id === id) || null;
 };
 
 export const deleteProject = (id: string): SavedProject[] => {

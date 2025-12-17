@@ -1,6 +1,7 @@
 
 export const PROMPTS = {
   ANALYZE: `أنت خبير في تصميم مشاريع المنظمات غير الحكومية (NGOs).
+
 المُدخلات:
 - قطاع المشروع: {{Category}}
 - المشكلة/الفكرة: {{Project_Idea}}
@@ -8,35 +9,123 @@ export const PROMPTS = {
 - الدولة / المنطقة: {{Country}}
 - لغة المستخدم: {{Language}}
 
-المطلوب: تحليل معمق للسياق، تقييم الاحتياج، وتحديد التحديات في {{Country}}. ابدأ مباشرة بدون مقدمات بلغة {{Language}}.`,
+المطلوب:
+1. تحليل الفكرة من حيث:
+   - مدى ملاءمة الفكرة للسياق الجغرافي ({{Country}})
+   - تقييم الاحتياج للفئة المستهدفة ({{Beneficiaries}})
+2. تحديد التحديات الرئيسية في {{Country}} المرتبطة بهذا القطاع.
+3. تقديم ملخص تحليلي احترافي لا يتجاوز 150 كلمة.
 
-  GENERATE_IDEAS: `بناءً على التحليل: {{Analyzed_Idea}}
-قم بتوليد 3 استراتيجيات مشاريع احترافية لقطاع {{Category}} في {{Country}}.
+تعليمات هامة:
+- لا تبدأ بعبارة "أنا خبير" أو أي مقدمات.
+- ابدأ التحليل مباشرة.
+- استخدم لغة {{Language}} فقط.`,
+
+  GENERATE_IDEAS: `بناءً على تحليل فكرة المشروع التالية:
+{{Analyzed_Idea}}
+
+سياق المشروع:
+- القطاع: {{Category}}
+- الدولة: {{Country}}
+
+قم بما يلي:
+1. توليد 3 أفكار مشاريع بديلة أو مطورة.
+2. كل فكرة يجب أن تحتوي على:
+   - اسم المشروع
+   - وصف مختصر
+   - الهدف الرئيسي
+   - سبب جاذبيتها للجهات الداعمة
+3. تأكد أن الأفكار:
+   - واقعية
+   - مناسبة لسياق {{Country}}
+   - قابلة للتنفيذ من قبل منظمة غير حكومية
+
 استخدم لغة {{Language}}.
-IMPORTANT: Return the result ONLY as a JSON array with: name, description, goal, appeal.`,
 
-  CREATE_PROPOSAL: `بصفتك كاتب مقترحات خبير، أنشئ مقترح مشروع شامل لـ: {{Selected_Title}}.
-القطاع: {{Category}}، المستفيدون: {{Beneficiaries}}، الدولة: {{Country}}.
-يجب أن يتضمن: الملخص، الخلفية، المشكلة، الأهداف، الأنشطة، المنهجية، النتائج، الاستدامة، المخاطر.
-اللغة: {{Language}}. ابدأ بالعنوان مباشرة.`,
+IMPORTANT: Return the result ONLY as a JSON array with the following structure, no markdown formatting:
+[
+  {
+    "name": "Project Name",
+    "description": "Short description",
+    "goal": "Main goal",
+    "appeal": "Why it is attractive"
+  }
+]`,
 
-  CREATE_LOGFRAME: `أنشئ إطاراً منطقياً (Logical Framework Matrix) احترافياً لمشروع: {{Project_Name}}.
-يجب أن يغطي المستويات: الأثر (Goal)، النتائج (Outcomes)، المخرجات (Outputs)، والأنشطة (Activities).
+  CREATE_PROPOSAL: `أنت كاتب مقترحات مشاريع محترف للمنظمات غير الحكومية.
+
+الفكرة المختارة:
+اسم المشروع: {{Selected_Title}}
+الوصف: {{Selected_Description}}
+الهدف: {{Selected_Goal}}
+
+معلومات إضافية:
+- القطاع: {{Category}}
+- المستفيدون: {{Beneficiaries}}
+- الدولة: {{Country}}
+
+أنشئ مقترح مشروع احترافي وشامل يحتوي على الأقسام التالية بالترتيب:
+
+1. الملخص التنفيذي
+2. خلفية واحتياج المشروع (مبني على السياق الجغرافي)
+3. مشكلة المشروع
+4. أهداف المشروع (عامة وخاصة)
+5. الفئة المستهدفة (تحليل دقيق)
+6. الأنشطة الرئيسية
+7. منهجية التنفيذ
+8. النتائج المتوقعة
+9. مؤشرات الأداء
+10. خطة المراقبة والتقييم
+11. الاستدامة
+12. المخاطر وخطط التخفيف
+13. الخاتمة
+
+تعليمات صارمة:
+- لا تقم بكتابة أي مقدمات مثل "بصفتي خبير..." أو "إليك المقترح".
+- ابدأ فوراً بالعنوان الأول "1. الملخص التنفيذي".
+- استخدم لغة رسمية ومقنعة جداً.
+- اللغة المطلوبة: {{Language}}`,
+
+  CREATE_BUDGET: `أنشئ ميزانية تفصيلية وشاملة جداً لمقترح المشروع هذا في دولة {{Country}}.
+
+المشروع: {{Project_Name}}
+
+المطلوب:
+جدول ميزانية منظم وتفصيلي يشمل جميع التكاليف المتوقعة (إدارية، تشغيلية، أنشطة، موارد بشرية، تسويق، تقييم ومتابعة).
+يجب أن تكون الأرقام واقعية للسوق في {{Country}}.
+
 استخدم لغة {{Language}}.
-IMPORTANT: Return the result ONLY as a JSON array of objects with keys: level, description, indicators, verification, assumptions.`,
 
-  CREATE_TIMELINE: `أنشئ خطة زمنية تنفيذية لمشروع: {{Project_Name}} مدتها 12 شهراً.
-حدد الأنشطة الرئيسية، الشهر المتوقع للتنفيذ، والجهة المسؤولة.
-اللغة: {{Language}}.
-IMPORTANT: Return ONLY a JSON array of objects with keys: activity, month (number 1-12), responsible.`,
+IMPORTANT: Return the result ONLY as a JSON object with this structure:
+{
+  "currency": "Currency Code (e.g. USD, EGP)",
+  "items": [
+    {
+      "category": "Admin/Operational/Activity/HR",
+      "item": "Item Name",
+      "description": "Short desc",
+      "quantity": 1,
+      "unitCost": 100,
+      "total": 100
+    }
+  ]
+}`,
 
-  CREATE_BUDGET: `أنشئ ميزانية واقعية بالعملة المحلية لـ {{Country}} لمشروع: {{Project_Name}}.
-اللغة: {{Language}}.
-IMPORTANT: Return ONLY a JSON object with: currency, items (array with category, item, description, quantity, unitCost, total).`,
+  REFINE_PROPOSAL: `أنت مساعد ذكي لتحسين مقترحات المشاريع.
 
-  REFINE_PROPOSAL: `عدل مقترح المشروع التالي بناءً على الطلب: {{User_Edit_Request}}.
-المقترح الحالي: {{Current_Project}}
-اللغة: {{Language}}.`,
+المشروع الحالي:
+{{Current_Project}}
+
+طلب المستخدم:
+{{User_Edit_Request}}
+
+قم بما يلي:
+1. فهم التعديل المطلوب بدقة.
+2. تعديل الجزء المعني فقط دون التأثير على بقية المشروع.
+3. تحسين الصياغة وجعلها أكثر احترافية.
+4. عرض النسخة المعدلة بوضوح (المقترح بالكامل) بدون مقدمات.
+
+استخدم لغة {{Language}}.`,
 };
 
 export const LANGUAGES = [
@@ -60,118 +149,170 @@ export const CATEGORIES = [
 export const UI_TEXT: any = {
   ar: {
     heroTitle: "أثــر",
-    heroSubtitle: "أداة ذكية لصناعة التغيير الإنساني",
-    platformGoal: "منصة احترافية تساعد المنظمات على تخطيط مشاريعها، كتابة المقترحات، وتصميم الإطارات المنطقية والميزانيات بذكاء.",
+    heroSubtitle: "أثر ليست مجرد منصة ....بل أداة لصناعة التغيير",
+    platformGoal: "منصة ويب إنسانية تساعد المنظمات غير الحكومية على تخطيط مشاريعها، كتابة مقترحات احترافية، وقياس الأثر بطريقة بسيطة وذكية.",
     targetAudienceTitle: "لمن هذه المنصة؟",
-    targetAudience: ["المنظمات غير الحكومية", "فرق الاستجابة", "كتاب المقترحات", "رواد العمل الخيري"],
-    stepsTitle: "رحلة البناء",
-    steps: ["تحديد المشكلة", "رسم الاستراتيجية", "بناء المقترح المتكامل"],
+    targetAudience: ["المنظمات غير الحكومية", "المبادرات المجتمعية", "فرق كتابة المقترحات", "المانحون"],
+    stepsTitle: "كيف تعمل؟",
+    steps: ["أدخل فكرة المشروع", "خطّط بذكاء", "اترك أثراً"],
     
-    labelIdea: "وصف المشكلة / الفكرة",
-    placeholderIdea: "اشرح المشكلة الإنسانية التي تسعى لحلها...",
-    labelCategory: "قطاع المشروع",
-    labelBeneficiaries: "المستفيدون",
-    placeholderBeneficiaries: "الأيتام، النساء، اللاجئين...",
+    labelIdea: "وصف المشكلة الإنسانية / الفكرة",
+    placeholderIdea: "اشرح المشكلة التي تريد حلها والفكرة المقترحة...",
+    labelCategory: "فئة المشروع",
+    labelBeneficiaries: "الفئة المستفيدة",
+    placeholderBeneficiaries: "مثال: الأيتام، النساء المعيلات، اللاجئين...",
     labelCountry: "الدولة / المنطقة",
-    placeholderCountry: "اليمن، فلسطين، السودان...",
-    labelLanguage: "لغة العمل",
+    placeholderCountry: "مثال: اليمن، غزة، السودان...",
+    labelLanguage: "لغة المشروع والواجهة",
     
-    btnAnalyze: "بدء التحليل الاستراتيجي",
-    analysisTitle: "تحليل الاحتياج والسياق",
-    btnIdeas: "توليد استراتيجيات الحل",
+    btnAnalyze: "بدء تخطيط المشروع",
+    analysisTitle: "تحليل السياق والاحتياج",
+    btnIdeas: "توليد حلول وبدائل",
     selectTitle: "مخطط المشروع",
-    selectSubtitle: "اختر الاستراتيجية التي تحقق أكبر أثر ممكن.",
-    btnSelect: "اعتماد الاستراتيجية",
-    draftTitle: "مقترح المشروع الكامل",
+    selectSubtitle: "اختر الهيكل الأنسب لتحقيق الأثر.",
+    btnSelect: "اعتماد هذا المخطط",
+    draftTitle: "مسودة المقترح الكامل",
     btnAssistant: "المساعد الذكي",
-    btnLogFrame: "تصميم الإطار المنطقي",
-    btnTimeline: "الخطة الزمنية",
-    btnBudget: "الميزانية المالية",
-    assistantPlaceholder: "كيف يمكنني تحسين هذا القسم؟",
+    btnBudget: "حساب الميزانية التقديرية",
+    assistantPlaceholder: "كيف يمكنني تحسين هذا المقترح؟",
     btnRefine: "تحديث",
-    refining: "جاري التحسين...",
     budgetTitle: "الميزانية التفصيلية",
-    totalCost: "الإجمالي التقديري",
-    btnExportWord: "تصدير المقترح الكامل",
-    btnExportExcel: "تصدير البيانات المالية",
-    btnExportCSV: "تصدير ملف CSV",
-    loading: "الذكاء الاصطناعي يبني مشروعك الآن...",
+    totalCost: "إجمالي التكلفة التقديرية",
+    btnExportWord: "تصدير المقترح (Word)",
+    btnExportExcel: "تصدير الميزانية (Excel)",
+    colCategory: "بند الصرف",
+    colItem: "التفاصيل",
+    colDesc: "الوصف",
+    colQty: "العدد",
+    colUnit: "ت. الوحدة",
+    colTotal: "الإجمالي",
+    costDist: "توزيع التكاليف",
+    loading: "جاري معالجة البيانات...",
     startOver: "مشروع جديد",
     dismiss: "إغلاق",
-    selectIdeaBtn: "هذه هي الاستراتيجية الأفضل",
-    goalLabel: "الهدف الاستراتيجي",
-    appealLabel: "نقاط القوة للمانحين",
-    logFrameTitle: "الإطار المنطقي (LogFrame)",
-    timelineTitle: "خطة التنفيذ (12 شهر)",
-    historyTitle: "أرشيف الأثر",
-    historySubtitle: "مشاريعك التي قمت بتصميمها سابقاً",
-    noProjects: "لا توجد مشاريع محفوظة حالياً.",
-    btnLoad: "استعراض المشروع",
-    btnDelete: "حذف",
-    costDist: "توزيع التكاليف",
-    colCategory: "الفئة",
-    colItem: "البند",
-    colDesc: "الوصف",
-    colQty: "الكمية",
-    colUnit: "تكلفة الوحدة",
-    colTotal: "الإجمالي"
+    selectIdeaBtn: "اختيار هذه الاستراتيجية",
+    goalLabel: "الهدف العام",
+    appealLabel: "نقاط القوة",
+    editPrompt: "اكتب طلب التعديل هنا...",
+    thinking: "جاري التحليل...",
+    refining: "جاري التحسين...",
+    historyTitle: "أرشيف المشاريع",
+    historySubtitle: "مشاريعك السابقة ومسوداتها",
+    noProjects: "لا توجد مشاريع محفوظة.",
+    dateLabel: "تاريخ الإنشاء",
+    btnLoad: "فتح المشروع",
+    btnDelete: "حذف"
   },
   en: {
     heroTitle: "Athar",
-    heroSubtitle: "A smart tool for humanitarian change",
-    platformGoal: "A professional platform helping NGOs plan projects, write proposals, and design logical frameworks and budgets intelligently.",
+    heroSubtitle: "Athar is not just a platform... but a tool for creating change.",
+    platformGoal: "A humanitarian web platform helping NGOs plan projects, write professional proposals, and measure impact simply and smartly.",
     targetAudienceTitle: "Who is this for?",
-    targetAudience: ["NGOs", "Response Teams", "Proposal Writers", "Philanthropists"],
-    stepsTitle: "The Journey",
-    steps: ["Identify Problem", "Strategize", "Build Proposal"],
+    targetAudience: ["NGOs", "Community Initiatives", "Proposal Teams", "Donors"],
+    stepsTitle: "How it works?",
+    steps: ["Enter Project Idea", "Plan Smartly", "Make an Impact"],
 
-    labelIdea: "Problem / Idea Description",
-    placeholderIdea: "Describe the humanitarian problem...",
-    labelCategory: "Project Sector",
+    labelIdea: "Humanitarian Problem / Idea",
+    placeholderIdea: "Describe the problem and your proposed solution...",
+    labelCategory: "Project Category",
     labelBeneficiaries: "Beneficiaries",
-    placeholderBeneficiaries: "Orphans, Women, Refugees...",
+    placeholderBeneficiaries: "e.g., Orphans, Head-of-household women...",
     labelCountry: "Country / Region",
-    placeholderCountry: "Yemen, Palestine, Sudan...",
+    placeholderCountry: "e.g., Yemen, Gaza, Sudan...",
     labelLanguage: "Language",
 
-    btnAnalyze: "Start Strategic Analysis",
-    analysisTitle: "Needs & Context Analysis",
-    btnIdeas: "Generate Strategies",
+    btnAnalyze: "Start Planning",
+    analysisTitle: "Context & Needs Analysis",
+    btnIdeas: "Generate Solutions",
     selectTitle: "Project Planner",
-    selectSubtitle: "Choose the strategy that maximizes impact.",
-    btnSelect: "Adopt Strategy",
-    draftTitle: "Full Project Proposal",
+    selectSubtitle: "Choose the best structure to achieve impact.",
+    btnSelect: "Select Strategy",
+    draftTitle: "Full Proposal Draft",
     btnAssistant: "AI Assistant",
-    btnLogFrame: "Logical Framework",
-    btnTimeline: "Implementation Plan",
-    btnBudget: "Financial Budget",
-    assistantPlaceholder: "How can I improve this section?",
-    btnRefine: "Refine",
-    refining: "Refining...",
+    btnBudget: "Calculate Budget",
+    assistantPlaceholder: "How can I improve this?",
+    btnRefine: "Update",
     budgetTitle: "Detailed Budget",
-    totalCost: "Estimated Total",
-    btnExportWord: "Export Full Proposal",
-    btnExportExcel: "Export Financials",
-    btnExportCSV: "Export CSV",
-    loading: "AI is constructing your project...",
-    startOver: "New Project",
-    dismiss: "Dismiss",
-    selectIdeaBtn: "Select Strategy",
-    goalLabel: "Strategic Goal",
-    appealLabel: "Donor Appeal",
-    logFrameTitle: "Logical Framework (LogFrame)",
-    timelineTitle: "Execution Plan (12 Mo)",
-    historyTitle: "Impact Archive",
-    historySubtitle: "Your previously designed projects",
-    noProjects: "No projects saved yet.",
-    btnLoad: "View Project",
-    btnDelete: "Delete",
-    costDist: "Cost Distribution",
+    totalCost: "Total Estimated Cost",
+    btnExportWord: "Export Proposal (Word)",
+    btnExportExcel: "Export Budget (Excel)",
     colCategory: "Category",
     colItem: "Item",
     colDesc: "Description",
-    colQty: "Quantity",
+    colQty: "Qty",
     colUnit: "Unit Cost",
-    colTotal: "Total"
+    colTotal: "Total",
+    costDist: "Cost Distribution",
+    loading: "Processing data...",
+    startOver: "New Project",
+    dismiss: "Dismiss",
+    selectIdeaBtn: "Select Strategy",
+    goalLabel: "Goal",
+    appealLabel: "Strengths",
+    editPrompt: "Enter edit request...",
+    thinking: "Analyzing...",
+    refining: "Refining...",
+    historyTitle: "Project Archive",
+    historySubtitle: "Your previous projects and drafts",
+    noProjects: "No saved projects.",
+    dateLabel: "Created",
+    btnLoad: "Open Project",
+    btnDelete: "Delete"
+  },
+  fr: {
+    heroTitle: "Athar",
+    heroSubtitle: "Athar n'est pas seulement une plateforme... mais un outil pour créer le changement.",
+    platformGoal: "Une plateforme humanitaire aidant les ONG à planifier des projets, rédiger des propositions et mesurer l'impact.",
+    targetAudienceTitle: "Pour qui ?",
+    targetAudience: ["ONG", "Initiatives locales", "Équipes de rédaction", "Bailleurs"],
+    stepsTitle: "Comment ça marche ?",
+    steps: ["Idée du projet", "Planifier intelligemment", "Créer de l'impact"],
+
+    labelIdea: "Problème Humanitaire / Idée",
+    placeholderIdea: "Décrivez le problème et la solution proposée...",
+    labelCategory: "Catégorie du Projet",
+    labelBeneficiaries: "Bénéficiaires",
+    placeholderBeneficiaries: "ex: Orphelins, Femmes chefs de famille...",
+    labelCountry: "Pays / Région",
+    placeholderCountry: "ex: Yémen, Gaza, Soudan...",
+    labelLanguage: "Langue",
+
+    btnAnalyze: "Commencer la Planification",
+    analysisTitle: "Analyse du Contexte",
+    btnIdeas: "Générer des Solutions",
+    selectTitle: "Planificateur de Projet",
+    selectSubtitle: "Choisissez la meilleure structure pour l'impact.",
+    btnSelect: "Choisir la Stratégie",
+    draftTitle: "Projet de Proposition",
+    btnAssistant: "Assistant IA",
+    btnBudget: "Calculer le Budget",
+    assistantPlaceholder: "Comment améliorer ceci ?",
+    btnRefine: "Mettre à jour",
+    budgetTitle: "Budget Détaillé",
+    totalCost: "Coût Total",
+    btnExportWord: "Exporter (Word)",
+    btnExportExcel: "Exporter (Excel)",
+    colCategory: "Catégorie",
+    colItem: "Article",
+    colDesc: "Description",
+    colQty: "Qté",
+    colUnit: "Coût Unitaire",
+    colTotal: "Total",
+    costDist: "Répartition",
+    loading: "Traitement des données...",
+    startOver: "Nouveau Projet",
+    dismiss: "Fermer",
+    selectIdeaBtn: "Choisir la Stratégie",
+    goalLabel: "Objectif",
+    appealLabel: "Forces",
+    editPrompt: "Demande de modification...",
+    thinking: "Analyse...",
+    refining: "Amélioration...",
+    historyTitle: "Archives",
+    historySubtitle: "Vos projets précédents",
+    noProjects: "Aucun projet sauvegardé.",
+    dateLabel: "Créé le",
+    btnLoad: "Ouvrir",
+    btnDelete: "Supprimer"
   }
 };

@@ -1,28 +1,45 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# أثر | مولد مقترحات المشاريع للمنظمات (NGO Proposal Generator) 🌍✨
 
-# Run and deploy your AI Studio app
+منصة ذكية ومبتكرة مصممة لمساعدة المنظمات غير الحكومية (NGOs) في تحويل أفكارها إلى مقترحات مشاريع احترافية متكاملة وجاهزة للتمويل، مع ميزانيات تفصيلية وإمكانية التصدير.
 
-This contains everything you need to run your app locally.
+## 🌟 المميزات الرئيسية
+- **تحليل ذكي للفكرة:** تحليل أولي لقطاع المشروع، التحديات الجغرافية، والفئات المستهدفة.
+- **توليد أفكار بديلة:** اقتراح 3-5 نماذج مشاريع مطورة بناءً على السياق المحلي.
+- **مقترح مشروع كامل:** صياغة شاملة (ملخص، مشكلة، أهداف، أنشطة، استدامة).
+- **ميزانية تفصيلية:** حساب تلقائي للتكاليف الإدارية والتشغيلية والأنشطة.
+- **تصدير احترافي:** استخراج الملفات بصيغة **Word (.docx)** للمقترح و **Excel (.xlsx)** للميزانية.
+- **تصميم عصري (Glassmorphism):** واجهة مستخدم فاخرة تدعم الوضع الليلي (Dark Mode) واللغة العربية (RTL).
 
-View your app in AI Studio: https://ai.studio/apps/drive/10NXsxqOPdu4inj22eDwh-DVPm_-5CCvC
+## 🚀 التقنيات المستخدمة
+- **Frontend:** Vanilla JS, CSS3 (Glassmorphism), HTML5.
+- **Backend:** Node.js, Express.
+- **Libraries:**
+  - `docx`: لتوليد ملفات الوورد.
+  - `exceljs`: لتوليد ملفات الإكسل.
+  - `Google Fonts`: (Outfit & Cairo).
 
-## Deployment to GitHub Pages
+## 🛠️ كيف تبدأ؟
+1. **قم بالدخول إلى المجلد:**
+   ```bash
+   cd "مجلد جديد"
+   ```
+2. **تثبيت التبعات:**
+   ```bash
+   npm install
+   ```
+3. **تشغيل الخادم:**
+   ```bash
+   node server.js
+   ```
+4. **فتح التطبيق:**
+   افتح ملف `index.html` في متصفحك أو استخدم Live Server.
 
-To deploy this project to GitHub Pages:
+## 📂 هيكلة المشروع
+- `index.html`: هيكل الموقع والـ UI.
+- `style.css`: النظام التصميمي والأنيميشن.
+- `app.js`: المنطق البرمجي للواجهة الأمامية.
+- `server.js`: خادم التصدير (Node.js).
+- `package.json`: قائمة المكاتب والتبعيات.
 
-1. **Upload your code** to a GitHub repository.
-2. **Add Your API Key**:
-   - Go to your Repository Settings > Secrets and variables > Actions.
-   - Click "New repository secret".
-   - Name: `GEMINI_API_KEY`.
-   - Value: (Paste your Gemini API key here).
-3. **Enable GitHub Pages**:
-   - Go to Settings > Pages.
-   - Under "Build and deployment", set Source to "GitHub Actions".
-4. **Push to Main**: The included GitHub Action will automatically build and deploy your site.
-
-## Previewing and AI Integration
-- The application is designed to maintain full AI integration through the `GEMINI_API_KEY` secret.
-- Once deployed, you can access the professional preview link provided by GitHub.
+---
+تم التطوير بشغف لدعم جهود التنمية حول العالم. ❤️

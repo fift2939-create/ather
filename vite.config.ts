@@ -5,10 +5,9 @@ import react from '@vitejs/plugin-react';
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', '');
 
-  // Support GitHub Pages by setting base if needed
-  // If deploying to username.github.io/repo/, set base to '/repo/'
-  // Using './' is a safe default for most static hosting
-  const base = mode === 'production' ? './' : '/';
+  // Use empty string base for relative paths in production
+  // This helps avoid issues with subdirectories on GitHub Pages
+  const base = mode === 'production' ? '' : '/';
 
   return {
     base: base,

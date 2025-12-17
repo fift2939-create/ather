@@ -45,9 +45,9 @@ const ProposalStep: React.FC<Props> = ({ proposal, onNext, onRefine, language, i
           <button 
             onClick={onNext}
             disabled={isRefining}
-            className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 disabled:opacity-50 px-6 py-3 rounded-xl text-base transition font-bold text-white shadow-lg shadow-green-900/20 font-tajawal"
+            className="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 disabled:opacity-50 px-6 py-3 rounded-xl text-base transition font-bold text-white shadow-lg shadow-indigo-900/20 font-tajawal"
           >
-            {t.btnBudget} {isRTL ? <ArrowLeft size={18} /> : <ArrowRight size={18} />}
+            {t.btnLogFrame} {isRTL ? <ArrowLeft size={18} /> : <ArrowRight size={18} />}
           </button>
         </div>
       </div>
@@ -55,7 +55,6 @@ const ProposalStep: React.FC<Props> = ({ proposal, onNext, onRefine, language, i
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Document View */}
         <div className="lg:col-span-8 bg-white dark:bg-[#1a1a2e] rounded-xl shadow-2xl border border-slate-200 dark:border-white/5 min-h-[80vh] p-8 md:p-16 relative overflow-hidden">
-            {/* Decorative top bar like a document */}
             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-purple-500 via-pink-500 to-indigo-500"></div>
             
             {isRefining ? (
@@ -93,13 +92,6 @@ const ProposalStep: React.FC<Props> = ({ proposal, onNext, onRefine, language, i
                 {t.btnRefine}
               </button>
             </form>
-            <div className="mt-6 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl border border-purple-100 dark:border-purple-800/30">
-              <p className="text-xs font-tajawal text-purple-800 dark:text-purple-300 leading-relaxed italic">
-                {isRTL 
-                  ? "المساعد الذكي يساعدك في إضافة أقسام جديدة، تغيير الصياغة، أو تحسين مؤشرات الأداء بناءً على طلبك." 
-                  : "The AI Assistant helps you add new sections, change the tone, or improve performance indicators based on your request."}
-              </p>
-            </div>
           </GlassCard>
         </div>
       </div>

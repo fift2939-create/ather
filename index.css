@@ -1,0 +1,12 @@
+/* Main styles */
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@font-face {
+  font-family: 'Tajawal';
+  font-style: normal;
+  display: swap;
+}

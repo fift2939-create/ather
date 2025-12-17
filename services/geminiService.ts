@@ -1,10 +1,10 @@
 
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { PROMPTS } from "../constants";
-import { UserInput, ProjectIdea, BudgetData } from "../types";
+import { UserInput, ProjectIdea, BudgetData, LogFrameRow, TimelineActivity } from "../types";
 
-const getClient = () => new GoogleGenAI({ apiKey: process.env.API_KEY });
-const MODEL_NAME = 'gemini-3-pro-preview';
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+const MODEL_NAME = 'gemini-1.5-flash';
 
 const cleanJSON = (text: string): string => {
   if (!text) return "[]";
@@ -12,7 +12,7 @@ const cleanJSON = (text: string): string => {
 };
 
 export const analyzeIdea = async (input: UserInput): Promise<string> => {
-  const ai = getClient();
+  const model = genAI.getGenerativeModel({ model: MODEL_NAME });
   const prompt = PROMPTS.ANALYZE
     .replace('{{Project_Idea}}', input.idea)
     .replace('{{Country}}', input.country)
@@ -20,50 +20,30 @@ export const analyzeIdea = async (input: UserInput): Promise<string> => {
     .replace(/{{Beneficiaries}}/g, input.beneficiaries)
     .replace(/{{Language}}/g, input.language);
 
-  const response = await ai.models.generateContent({
-    model: MODEL_NAME,
-    contents: prompt,
-    config: {
-      maxOutputTokens: 8000,
-      thinkingConfig: { thinkingBudget: 4000 }
-    }
-  });
-  return response.text || "Analysis failed.";
+  const result = await model.generateContent(prompt);
+  const response = await result.response;
+  return response.text() || "Analysis failed.";
 };
 
 export const generateIdeas = async (input: UserInput, analysis: string): Promise<ProjectIdea[]> => {
-  const ai = getClient();
+  const model = genAI.getGenerativeModel({
+    model: MODEL_NAME,
+    generationConfig: {
+      responseMimeType: "application/json",
+    }
+  });
   const prompt = PROMPTS.GENERATE_IDEAS
     .replace('{{Analyzed_Idea}}', analysis)
     .replace('{{Country}}', input.country)
     .replace('{{Category}}', input.category)
     .replace(/{{Language}}/g, input.language);
 
-  const response = await ai.models.generateContent({
-    model: MODEL_NAME,
-    contents: prompt,
-    config: {
-      responseMimeType: "application/json",
-      responseSchema: {
-        type: Type.ARRAY,
-        items: {
-          type: Type.OBJECT,
-          properties: {
-            name: { type: Type.STRING },
-            description: { type: Type.STRING },
-            goal: { type: Type.STRING },
-            appeal: { type: Type.STRING },
-          },
-          required: ["name", "description", "goal", "appeal"]
-        }
-      }
-    }
-  });
+  const result = await model.generateContent(prompt);
+  const response = await result.response;
 
   try {
-    const text = response.text;
-    const data = JSON.parse(cleanJSON(text || "[]"));
-    return data.map((d: any, idx: number) => ({ ...d, id: `idea-${idx}` }));
+    const data = JSON.parse(cleanJSON(response.text() || "[]"));
+    return data.map((d: any, idx: number) => ({ ...d, id: `idea-${idx}-${Date.now()}` }));
   } catch (e) {
     console.error("JSON Parsing Error:", e);
     return [];
@@ -71,67 +51,90 @@ export const generateIdeas = async (input: UserInput, analysis: string): Promise
 };
 
 export const createProposal = async (input: UserInput, idea: ProjectIdea): Promise<string> => {
-  const ai = getClient();
+  const model = genAI.getGenerativeModel({ model: MODEL_NAME });
   const prompt = PROMPTS.CREATE_PROPOSAL
     .replace('{{Selected_Title}}', idea.name)
-    .replace('{{Selected_Description}}', idea.description)
-    .replace('{{Selected_Goal}}', idea.goal)
     .replace('{{Category}}', input.category)
     .replace('{{Beneficiaries}}', input.beneficiaries)
     .replace('{{Country}}', input.country)
     .replace('{{Language}}', input.language);
 
-  const response = await ai.models.generateContent({
+  const result = await model.generateContent(prompt);
+  const response = await result.response;
+  return response.text() || "";
+};
+
+export const refineProposal = async (currentProposal: string, request: string, language: string): Promise<string> => {
+  const model = genAI.getGenerativeModel({ model: MODEL_NAME });
+  const prompt = PROMPTS.REFINE_PROPOSAL
+    .replace('{{User_Edit_Request}}', request)
+    .replace('{{Current_Project}}', currentProposal)
+    .replace('{{Language}}', language);
+
+  const result = await model.generateContent(prompt);
+  const response = await result.response;
+  return response.text() || currentProposal;
+};
+
+export const createLogFrame = async (projectName: string, language: string): Promise<LogFrameRow[]> => {
+  const model = genAI.getGenerativeModel({
     model: MODEL_NAME,
-    contents: prompt,
-    config: {
-      maxOutputTokens: 20000,
-      thinkingConfig: { thinkingBudget: 10000 }
+    generationConfig: {
+      responseMimeType: "application/json",
     }
   });
-  return response.text || "";
+  const prompt = PROMPTS.CREATE_LOGFRAME
+    .replace('{{Project_Name}}', projectName)
+    .replace('{{Language}}', language);
+
+  const result = await model.generateContent(prompt);
+  const response = await result.response;
+
+  try {
+    return JSON.parse(cleanJSON(response.text() || "[]"));
+  } catch (e) {
+    return [];
+  }
+};
+
+export const createTimeline = async (projectName: string, language: string): Promise<TimelineActivity[]> => {
+  const model = genAI.getGenerativeModel({
+    model: MODEL_NAME,
+    generationConfig: {
+      responseMimeType: "application/json",
+    }
+  });
+  const prompt = PROMPTS.CREATE_TIMELINE
+    .replace('{{Project_Name}}', projectName)
+    .replace('{{Language}}', language);
+
+  const result = await model.generateContent(prompt);
+  const response = await result.response;
+
+  try {
+    return JSON.parse(cleanJSON(response.text() || "[]"));
+  } catch (e) {
+    return [];
+  }
 };
 
 export const createBudget = async (input: UserInput, ideaName: string, proposalText: string): Promise<BudgetData> => {
-  const ai = getClient();
+  const model = genAI.getGenerativeModel({
+    model: MODEL_NAME,
+    generationConfig: {
+      responseMimeType: "application/json",
+    }
+  });
   const prompt = PROMPTS.CREATE_BUDGET
     .replace('{{Project_Name}}', ideaName)
     .replace('{{Country}}', input.country)
     .replace('{{Language}}', input.language);
 
-  const response = await ai.models.generateContent({
-    model: MODEL_NAME,
-    contents: `Proposal Summary: ${proposalText.substring(0, 2000)}\n\n${prompt}`,
-    config: {
-      responseMimeType: "application/json",
-      responseSchema: {
-        type: Type.OBJECT,
-        properties: {
-          currency: { type: Type.STRING },
-          items: {
-            type: Type.ARRAY,
-            items: {
-              type: Type.OBJECT,
-              properties: {
-                category: { type: Type.STRING },
-                item: { type: Type.STRING },
-                description: { type: Type.STRING },
-                quantity: { type: Type.NUMBER },
-                unitCost: { type: Type.NUMBER },
-                total: { type: Type.NUMBER }
-              },
-              required: ["category", "item", "quantity", "unitCost", "total"]
-            }
-          }
-        },
-        required: ["currency", "items"]
-      }
-    }
-  });
+  const result = await model.generateContent(`Proposal Summary: ${proposalText.substring(0, 2000)}\n\n${prompt}`);
+  const response = await result.response;
 
   try {
-    const text = response.text;
-    const data = JSON.parse(cleanJSON(text || "{}"));
+    const data = JSON.parse(cleanJSON(response.text() || "{}"));
     const totalCost = data.items?.reduce((acc: number, item: any) => acc + (item.total || 0), 0) || 0;
     return { currency: data.currency || "USD", items: data.items || [], totalCost };
   } catch (e) {
